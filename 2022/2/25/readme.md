@@ -155,4 +155,8 @@ contains로 순서와 개수와 상관없이 "1", ",", "2"가 contains되있는�
 DisplayName이라는 annotation을 활용해 무엇에 대한 테스트인지 명시할 수 있습니다.<br><br>
 여기서는 "StringIndexOutOfBoundsException 테스트"라고 명시합니다.<br><br>
 value에 "abc"가 저장되어 있을 때, charAt(3)를 호출하면 StringIndexOutOfBoundsException가 발생합니다.<br><br>
-
+이 때 이 예외 메세지가 IndexOutOfBoundsException.class로 형변환이 되는지 확인후<br><br>
+"String index out of range: 3" 메세지가 발생하도록 해줍니다.<br><br>
+다른 방법으로는 애초에 매개변수로 IndexOutOfBoundsException.class를 넣어주고<br><br>
+거기서 메세지를 전달하는 방법도 있습니다.<br><br>
+둘 중에 어떠한 방법을 사용해도 원하는 동일한 테스트 결과를 얻을 수 있습니다.<br><br>
