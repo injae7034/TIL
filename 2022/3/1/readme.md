@@ -148,3 +148,12 @@ assertThatIllegalArgumentException의 isThrownBy를 하여 그 내부에서 asse
 예외가 발생하는 상황인 매개변수 input을<br><br>
 partCalculate의 매개변수로 전달합니다.<br><br>
 그러면 예상한대로 IllegalArgumentException이 발생합니다.
+
+# 이외에 배운 것
+
+그 이외에도 일급컬렉션이 무엇인지, BiFunction을 사용해서 Enum에서 연산자와 메소드 처리를 같이 묶을 수 있는 방법과<br><br>
+0-9까지 정규표현식과 Pattern을 이용한 match, Enum에서 find를 할 때 속도 향상을 위해 HashMap을 이용하는데 여기서,<br><br>
+Function.identity를 이용하는 방법과 Stream Collect 사용 방법과 toMap과 Optional클래스는 무엇인지, 스트림API 사용방법,
+Predicate, Consumer 등을 이용해서 람다식 표현(메소드에 매개변수로 식을 넘겨주는 방법) 등등<br><br>
+모르는게 너무 많아서 블로그를 보면서 모르는게 나올 때마다 계속 찾아보니까 끝이 없네요...<br><br>
+내일은 위에서 언급한 사항들을 정리해보는 시간을 가지려고 합니다.
