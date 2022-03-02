@@ -302,7 +302,7 @@ public enum PayGroupAdvanced {
         this.payList = payList;
     }
     
-    public static PayGroupAdvanced findByPayType(PayType, payType) {
+    public static PayGroupAdvanced findByPayType(PayType payType) {
         return Arrays.stream(PayGroupAdvanced.values())
         .filter(payGroup -> payGroup.hasPayCode(payType)
         .findAny()
