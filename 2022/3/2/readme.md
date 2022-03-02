@@ -254,8 +254,72 @@ hasPayCode는 enum객체가 가지고 있는 payList를 stream화하여서 list�
 이제 이 코드를 바탕으로 테스트를 해보면
 ```java
 @Test
-
+public void PayGroup에_직접_결제종류_물어보기 () throws exception {
+    String payCode = selectPayCode();
+    PayGroup payGroup = PayGroup.findByPayCode(payCode);
+    
+    assertThat(payGroup.getTitle(), is("카드"));
+}
 ```
+payGroup의 정적메소드에 payCode를 입력 받아 그에 맞는 PayGroup의 객체를 스스로 생성하고 있습니다.<br><br>
+여기서 더 나아가 결제수단이 문자열이기 때문에 잘못된 문자열이 들어올 경우 관리가 안됩니다.<br><br>
+이를 위해 결제수단 역시 enum으로 정할 수 있습니다.<br><br>
+
+```java
+public enum PayType {
+    ACCOUNT_TRANSFER("계좌이체"),
+    REMITTANCE("무통장입금"),
+    ON_SITE_PAYMENT("현장결제"),
+    TOSS("토스"),
+    PAYCO("페이코"),
+    CARD("신용카드"),
+    KAKAO_PAY("카카오페이"),
+    BAEMIN_PAY("배민페이"),
+    POINT("포인트"),
+    COUPON("쿠폰"),
+    EMPTY("없음");
+    
+    private String title;
+    
+    PayType(String title) { this.title = title; }
+    
+    public String getTitle() { return title; }
+```
+이렇게 enum으로 결제종류를 만든 다음에 이를 반영하여 아까 구성한 enum을 수정하면
+
+```java
+public enum PayGroupAdvanced {
+    CASH("현금", Arrays.asList(PayType.ACCOUNT_TRANSFER, PayType.REMITTANCE,  PayType.ON_SITE_PAYMENT, PayType.TOSS)),
+    CARD("카드", Arrays.asList(PayType.PAYCO, PayType.CARD, PayType.KAKAO_PAY, PayType.BAEMIN_PAY)),
+    ETC("기타", Arrays.asList(PayType.POINT, PayType.COUPON)),
+    EMPTY("없음", Collections.EMPTY_LIST);
+    
+    private String title;
+    private List<PayType> payList;
+    
+    PayGroupAdvanced(String title, List<PayType> payList) {
+        this.title = title;
+        this.payList = payList;
+    }
+    
+    public static PayGroupAdvanced findByPayType(PayType, payType) {
+        return Arrays.stream(PayGroupAdvanced.values())
+        .filter(payGroup -> payGroup.hasPayCode(payType)
+        .findAny()
+        .orElse(EMPTY);
+    }
+    
+    public static boolean hasPayCode(PayType payType) {
+        return payList.stream()
+        .anyMatch(pay -> pay == payType);
+    }
+    
+    public String getTitle() { return title; }
+}
+```
+이렇게 하면 문자열이 아니라 PayType으로 매개변수를 받기 때문에 타입 안정성까지 갖춰서 PayGroup과 관련된 처리를 할 수 있습니다.<br><br>
+
+다시 이제 다음 코드로 넘어가도록 하겠습니다.<br><br>
 
 ```java
 import java.util.regex.Pattern;
@@ -295,3 +359,22 @@ public class StringCalculator {
    }
 }
 ```
+
+정규식 표현을 쓰기 위해 regex.Pattern을 import해줍니다.<br><br>
+StringCalculator의 멤버로 문자열인 formula, int형 result<br><br>
+그리고 enum클래스인 operator를 두고 초기값은 PLUS상수로 설정합니다.<br><br>
+setFormula에서 매개변수로 입력 받은 formula 문자열을 멤버로 저장합니다.<br><br>
+calculateFormula에서 전체적인 계산을 하는데<br><br>
+formula를 공백을 기준으로 substring하여 그 배열요소(문자열)을 calculatePartial에 매개변수로 전달합니다.<br><br>
+calculatePartial에서는 문자열을 입력 받아 그 문자열이 정규식 표현으로 0~9에 해당하는 숫자인지 확인 후에<br><br>
+숫자이면 멤버인 currentOperator의 operate함수의 매개변수로 전달하여 계산된 결과를 구합니다.<br><br>
+숫자가 아니면 연산자일 것이기 때문에 어떤 연산지애 속하는지 알아내기 위해<br><br>
+연산자의 상수들을 순회하면서 input과 알치하는지 확인합니다.<br><br>
+일치한다면 input에는 숫자가 들어었기 때문에 currentOperator의 operate를 호출하여 계산합니다.<br><br>
+그리고 calculatrPartial메소드를 종료시킵니다.<br><br>
+일치하지 않는다면 input에는 숫자가 저장되어 있지 않기 때문에<br><br>
+Operator의 상수들을 순회하면서 input과 같은 연산자가 있는지 확인합니다.<br><br>
+같은 연산자가 있다면 currentOperator를 해당 operator로 바꿔서 저장해주고 메소드를 종료시킵니다.<br><br>
+여기까지 메소드가 종료되지 않는다면 input에는 엉뚱한 문자열이 저장되어 있기 때문에<br><br>
+IllegalArgumentException을 리턴합니다.<br><br>
+결국에 calculateFormula에서 calculatePartial을 반복해서 호출하면 문자열 계산이 이뤄지고 이 결과를 반환합니다.<br><br>
