@@ -1,6 +1,7 @@
 # 3일에 공부한 내용을 적었습니다.
 
 # 다른 사람이 풀이한 문자열 계산기 코드를 보고 공부하였습니다.
+## Formula 클래스
 ```java
 package study;
 
@@ -19,7 +20,7 @@ public class Formula {
 기존에는 입력 받은 식을 분리하는 작업을 따로 Main이든 StringCalculator에서든 하고 있었는데<br><br>
 이 분리하는 작업 역시 Formula클래스를 생성하여 거기에 역할을 분배하는 것이 좀 더 객체지향적이 코드인 것 같습니다.<br><br>
 그래서 Formula클래스의 역할은 split하는 역할입니다.<br><br>
-
+## Main 클래스
 ```java
 package study;
 
@@ -41,7 +42,7 @@ public class Main {
 공백으로 구분된 문자열배열을 formula에 반환 받은 다음에 이를 StringCalculator의 메소드인 calculateFormula에 넘겨 주면<br><br>
 문자열이 계산되어 원하는 결과를 얻을 수 있습니다.<br><br>
 StringCalulator의 코드를 보면<br><br>
-
+## 
 ```java
 package study;
 
@@ -102,6 +103,7 @@ currentOperator도 아까 초기화로 인해 PLUS로 설정되어 있습니다.
 매개변수로 문자열을 전달하면, 그에 맞는 Operator 객체를 반환받아 이를 currentOperator에 저장합니다.<br><br>
 이런식으로 누적하면서 result에 연산 중간과정의 값을 저장하고, currentOperator에 연산자를 갱신해주면서 문자열 계산을 하게 됩니다.<br><br>
 다음으로는 Operator의 코드를 볼 차례입니다.<br><br>
+## Operator 
 ```java
 package study;
 
@@ -187,6 +189,7 @@ findOperator는 StringCalculator의 calculatePartial에서 호출되어야 하�
 null값이면 잘못된 문자열이 있다는 뜻이기 때문에 IllegalArgumentException을 throw하여 예외처리를 하고,<br><br>
 사칙연산 중에 포함이 되어 있다면 그 사칙연산을 가지고 있는 enum클래스의 객체를 반환합니다.<br><br>
 이제 이 코드들이 잘돌아가는지 확인하기 위한 테스트코드를 볼 차례입니다.<br><br>
+## 테스트코드
 ```java
 package study;
 
@@ -258,3 +261,233 @@ public class StringCalculatorTest {
     }
 }
 ```
+
+# 코드 다시 수정함
+## Formula 클래스
+```java
+package study;
+
+public class Formula {
+    private String[] formula;
+
+    public Formula(String formula) {
+        this.formula = formula.split(" ");
+    }
+
+    public String[] getFormula() {
+        return formula;
+    }
+}
+```
+Formula클래스를 생성할 때 바로 공백을 기준으로 split시켜서 멤버로 저장하고, getter메소드를 추가합니다.<br><br>
+
+## Main 클래스
+```java
+package study;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("문자열 계산기");
+        System.out.println("공백으로 구분하여 원하시는 숫자와 연산자를 입력해주세요.");
+        String value = scanner.nextLine();//사용자로부터 공백을 기준으로 문자열을 구분하여 입력 받음
+        StringCalculator stringCalculator = new StringCalculator();
+        System.out.println(stringCalculator.calculateFormula(new Formula(value).getFormula()));
+    }
+}
+```
+사용자로부터 입력 받은 문자열 value를 바로 formula생성자에 넣어주고,<br><br>
+이를 get한 반환값을 calculateFormula의 매개변수로 전달한 다음 이 반환값을 출력합니다.
+
+## Operator 클래스
+```java
+package study;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public enum Operator {
+    PLUS("+", (first, second) -> first + second),
+    MINUS("-", (first, second) -> first - second),
+    MULTIPLY("*", (first, second) -> first * second),
+    DEVIDE("/", (first, second) -> {
+        if(second == 0) {
+            throw new IllegalArgumentException();
+        }
+        return first / second;
+    });
+
+    private static final Map<String, Operator> operatorMap = Collections.
+            unmodifiableMap(Stream.of(values()).collect(Collectors
+                    .toMap(operator -> operator.getSymbol(), Function.identity())));
+    private String symbol;
+    private BiFunction<Integer, Integer, Integer> operation;
+
+    Operator(String symbol, BiFunction<Integer, Integer, Integer> operation) {
+        this.symbol = symbol;
+        this.operation = operation;
+    }
+
+    public String getSymbol() {
+        return this.symbol;
+    }
+
+    public int operate(int first, int second) {
+        return operation.apply(first, second);
+    }
+
+    public static Operator findOperator(String symbol) {
+        Operator operator = operatorMap.get(symbol);
+
+        if(operator == null) {
+            throw new IllegalArgumentException();
+        }
+
+        return operator;
+    }
+}
+```
+위와 같고 다만 Map은 상수이기 때문에 멤버에서 제일 위로 옮겼습니다.
+
+## StringCalculator 클래스
+```java
+package study;
+
+import java.util.regex.Pattern;
+
+public class StringCalculator {
+    private static final Pattern regExp = Pattern.compile("^[0-9]*$");
+
+   public int calculateFormula(String[] formulaArray) {
+
+       int result = 0;
+       Operator currentOperator = Operator.PLUS;
+
+       for(String input : formulaArray) {
+           if(regExp.matcher(input).find()) {
+               result = currentOperator.operate(result, Integer.parseInt(input));
+               continue;
+           }
+           currentOperator = Operator.findOperator(input);
+       }
+
+       return result;
+   }
+}
+```
+멤버로 상수인 Pattern의 객체를 가지고 이 값을 0-9까지 값으로 초기화합니다.<br><br>
+calculateFormula에서 매개변수로 문자열 배열을 입력받습니다.<br><br>
+result와 currentOperator는 더이상 멤버가 아닌 calculateFormula의 지역변수입니다.<br><br>
+매개변수로 입력 받은 문자열에서 원소(문자열)를 하나씩 구하여 상수정규식에서 일치하는 것이 있으면,<br><br>
+즉, 숫자문자열이면 currentOperator의 opreate연산을 실행하고, 실행한 다음에는 바로 반복문의 조건문으로 이동하도록 continue합니다.<br><br>
+숫자문자열이 아니면 사칙연산 중에 하나인지 확인하기 위해 Operator의 정적메소드인 findOperator를 호출하여<br><br>
+매개변수에 맞는 Operator객체를 반환하고 그 값을 currentOperator에 저장합니다.<br><br>
+더이상 calculatePartial은 없고, currentOperator도 result도 멤버가 아닙니다.<br><br>
+
+## StringCalculatorTest 클래스
+```java
+package study;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.*;
+
+public class StringCalculatorTest {
+    private StringCalculator stringCalculator = new StringCalculator();
+
+    @DisplayName("정상 입력시 의도대로 계산된 값이 나오는지 테스트")
+    @Test
+    void calculateTest() {
+        int result = stringCalculator.calculateFormula(new Formula("5 + 5 * 5 / 25").getFormula());
+        assertThat(2).isEqualTo(result);
+    }
+
+    @DisplayName("0으로  나눌 시 IllegalArgumentException이 발생하는지 테스트")
+    @Test
+    void devideZeroTest() {
+        assertThatIllegalArgumentException().isThrownBy(() -> {
+            stringCalculator.calculateFormula(new Formula("2 + 2 * 10 / 0").getFormula());
+        });
+    }
+
+    @DisplayName("입력 값이 null이거나 빈 공백 문자일 경우 IllegalArgumentException이 발생하는지 테스트")
+    @Test
+    void inputNullOrEmptySet() {
+        assertThatIllegalArgumentException().isThrownBy(() -> {
+            stringCalculator.calculateFormula(new Formula("2 +   * 2 / 2").getFormula());
+        });
+    }
+
+    @DisplayName("사칙연산 기호가 아닌 경우 IllegalArgumentException throw")
+    @Test
+    void checkPermittedOperator() {
+        assertThatIllegalArgumentException().isThrownBy(() -> {
+            stringCalculator.calculateFormula(new Formula("2 $ 6 * 5 / 4").getFormula());
+        });
+    }
+}
+```
+위와 같고 다만 여기에 있던 Operator클래스의 테스트를 별도로 클래스로 만들어 분리하였습니다.<br><br>
+
+## OperatorTest 클래스
+```java
+package study;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class OperatorTest {
+
+    @DisplayName("plus, minus, multiply, divide 테스트")
+    @ParameterizedTest
+    @CsvSource(value = {"+, 12", "-, 8", "*, 20", "/, 5"}, delimiter = ',')
+    void operatorTest(String operator, String result) {
+        assertThat(Operator.findOperator(operator).operate(10, 2))
+                .isEqualTo(Integer.parseInt(result));
+    }
+
+    @DisplayName("Operaotr plus 연산 테스트")
+    @Test
+    void operatorPlusTest() {
+        assertThat(Operator.PLUS.operate(1, 5)).isEqualTo(6);
+    }
+
+    @DisplayName("Operator minus 연산 테스트")
+    @Test
+    void operatorMinusTest() {
+        assertThat(Operator.MINUS.operate(9, 3)).isEqualTo(6);
+    }
+
+    @DisplayName("Opertor multiply 연산 테스트")
+    @Test
+    void operatorMultiplyTest() {
+        assertThat(Operator.MULTIPLY.operate(2, 4)).isEqualTo(8);
+    }
+
+    @DisplayName("Operator divide 연산 테스트")
+    @Test
+    void operatorDevideTest() {
+        assertThat(Operator.DEVIDE.operate(16 , 2)).isEqualTo(8);
+    }
+}
+```
+StringCalculatorTest에서 같이 하던 것을 별도로 분리하였습니다.<br><br>
+나머지 사칙연산 테스트는 그대로이고<br><br>
+findOperator가 제대로 작동하는지 테스트를 추가하였습니다.<br><br>
+이를 위해 ParameterizedTest를 추가하고,<br><br>
+CsvSource를 통해 각 연산자와 그 연산에 대한 결과 값을 원소로 두고, 연산자와 결과값의 구분을 콤마로 설정하였습니다.<br><br>
+이 후 operatorTest에서 매개변수로 문자열 2개를 입력 받고, 첫번째 문자열은 연산자가 들어갈 것이고,<br><br>
+두번째 문자열은 숫자문자열(연산에 대한 결과값)이 들어갈 것입니다.<br><br>
+Operator의 정적메소드인 findOperator를 호출하고, 매개변수로 연산자를 입력하고,<br><br>
+그 반환값인 Operator객체에 operate연산을 하여 연산 결과값과 일치하는지 테스트합니다.<br><br>
