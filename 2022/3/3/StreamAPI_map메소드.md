@@ -82,3 +82,64 @@ strings의 경우 뒤에 문자열을 바탕으로 타입을 추론하면 List\<
 expected의 경우도 List의 원소가 Int형이기 때문에 List\<Integer\>임을 추론할 수 있습니다.<br><br>
 assertIterableEquals를 활용하여 배열과 Collection 자료형도 비교가 가능합니다.<br><br>
 테스트 결과 성공적으로 문자열이 문자열 길이로 변환되었음을 알 수 있습니다.
+
+## 정수를 문자열로 변환(int -> String)
+int 기본 타입을 주어진 문자열과 합쳐서 반환하는 메소드를 구현합니다.<br><br>
+```java
+public List<String> generateStrings(String prefix, int size) {
+        return IntStream.range(0, size)
+                .mapToObj(i ->  prefix + i)
+                .collect(Collectors.toList());
+}
+```
+IntStream의 정적메소드인 range를 호출하여 0부터 size를 제외한 size 전까지 숫자에 대해 IntStream객체를 생성합니다.<br><br>
+이 IntStream객체, 즉, 기본형 특화 스트림을 일반 스트림으로 변환하기 위해 mapToObj메소드를 호출하고<br><br>
+매개변수로 i를 prefix + i 로 바꿔주는, 즉, 정수를 문자열로 바꿔주는 Function 식을 넣습니다.<br><br>
+그리고 이 결과를 List로 만들어 반환하도록 collect메소드를 호출합니다.<br><br>
+잘 작동하는지 테스트를 합니다.<br><br>
+```java
+@Test
+@DisplayName("정수를 문자열로 변환(int -> String)")
+void generateStringsTest() {
+        final var expected = List.of("wating-0", "waiting-1", "wating-2");
+        final var result = generateStrings("wating-", 3);
+        assertIterableEquals(expected, result);
+}
+```
+테스트가 성공함을 알 수 있습니다.<br><br>
+
+## 실외스포츠 이름 가져오기
+```java        
+public List<String> getOutdoorSportsName(List<Sport> sports, boolean isOutdoor) {
+    return sports.stream()
+        .filter(s -> s.isOutdoor() == isOutdoor)
+        .map(Sport::GetName)
+        .collect(Collectors.toList());
+}
+```
+Sport클래스를 리스트로 가지고 있는 객체 sports의 stream메소드를 호출하여 Stream\<Sport\>객체를 생성합니다.<br><br>
+filter메소드를 호출하여 List에 저장되어 있는 원소(Sport클래스의 객체)의 isOutdoor메소드의 결과값과<br><br>
+매개변수로 입력 받은 isOutdoor의 boolean값이 서로 일치하는 것만 거릅니다.<br><br>
+이렇게 걸러진 Stream객체를 map을 통해 원하는 자료로 만드는데, 걸러진 Sport객체들의 name을 구하기 위해<br><br>
+getName메소드를 호출하고, 이들을 collect를 통하며 List\<String\>객체를 만들어 이 값을 반환합니다.<br><br>
+제대로 작동하는지 테스트를 해봅니다.<br><br>
+```java
+@Test
+@DisplayName("실외 스포츠 이름 가져오기(Sport -> String)"
+void getOutdoorSportsNameTest() {
+    private final List<Sport> sports = List.of(
+        new Sports(1, "걷기", 40, false),
+        new Sports(2, "스쿼시", 126, true),
+        new Sports(3, "런닝머신", 110, true),
+        new Sports(4, "등산", 84, false));
+    final var expected = List.of("걷기", "등산");
+    final var result = getOutdoorSportsName(sports, true);
+    assertIterableEquals(expected, result);
+}
+```
+
+## 스포츠들의 칼로리 평균 구하기
+스포츠클래스의 리스트를 int형 리스트로 바꿉니다.<br><br>
+```java
+
+```
