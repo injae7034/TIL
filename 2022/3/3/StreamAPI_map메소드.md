@@ -141,5 +141,98 @@ void getOutdoorSportsNameTest() {
 ## 스포츠들의 칼로리 평균 구하기
 스포츠클래스의 리스트를 int형 리스트로 바꿉니다.<br><br>
 ```java
+public OptionalDouble getAverage(List<Sport> sports) {
+    return sports.stream()
+        .mapToInt(Sport::burnedCarlories)
+        .average();
+}
+```
+List의 stream메소드를 호출하면 일반 스트림이 반환되는데<br><br>
+mapToInt를 호출하여 이 일반스트림을 기본 자료형 특화인 IntStream으로 바꿔줍니다.<br><br>
+IntStream으로 바꿀 때 각 원소가 현재 Sport의 객체들인데 그 객체들의 칼로리량으로 바꿔줍니다.<br><br>
+그리고 IntStream의 average메소드를 통해 IntStream에 저장되어 있는 원소들의 평균을 구하여 반환해줍니다.<br><br>
+이 때 반환형이 OptionalDouble인데 이는 기본 원시 자료형 특화 Optional입니다.<br><br>
+average의 반환형이 OptionalDouble인 이유는 만약에 sports가 빈 리스트일 경우에 평균을 구하는 로직에서 Division by Zero가 발생할 수 있으므로<br><br>
+이 경우에 결괏값이 없을 수 있다는 것을 명시적으로 알려주기 위해서 OptionalDouble 형태로 반환해줍니다.<br><br>
+이제 이를 바탕으로 주어진 스포츠들의 평균 칼로리를 구합니다.<br>br>
+```java
+@Test
+@DisplayName("스포츠들의 칼로리 평균구하기(Sport -> int)")
+void getAverageTest() {
+     private final List<Sport> sports = List.of(
+        new Sports(1, "걷기", 40, false),
+        new Sports(2, "스쿼시", 126, true),
+        new Sports(3, "런닝머신", 110, true),
+        new Sports(4, "등산", 84, false));
+        
+    final var expected = 90.0;
+    final var result = getAverage(sports);
+    assertTrue(result.isPresent());
+    assertEquals(expected, result.getAsDouble());
+}
+```
+getAverage의 반환형이 OptionalDouble이기 때문에 먼저 result가 비어있는지 여부를 assertTrue와 isPresent를 통해 확인합니다.<br><br>
+이 후 getAsDouble을 통해 호출한 값과 expected값이 같은지 assertEquals를 통해 확인합니다.<br><br>
 
+## 문자열을 문자열로 변환
+```java
+public List<String> getUpperStrings(List<String> strings) {
+    return strings.stream()
+            .map(String::toUpperCase)
+            .collect(Collectors.toList());
+}
+```
+문자열을 모두 대문자로 바꾸는 메소드인데 스트림의 특성상 getUpperStrings메소드가 실행되면 반환값은 대문자가 되지만<br><br>
+매개변수의 값은 바뀌지 않습니다.<br><br>
+이제 성공적으로 대문자로 바뀌는지 테스트합니다.<br><br>
+```java
+@Test
+@DisplayName("문자열을 대문자로 변환")
+void getUpperCaseTest() {
+    final var strings = List.of("banana", "apple", "orange");
+    final var expected = List.of("BANANA", "APPLE", "ORANGE");
+    final var resutl = getUpperCase(strings);
+    assertIterableEquals(expected, equals);
+}
+```
+
+## 상품 카테고리에서 자동차를 분류한 후 자동차 클래스 생성하기 
+
+```java
+private final List<ProductEntity> productEntities = List.of(
+        new ProductEntity(1L, "Aventador", "CAR", LocalDate.of(2018, 3, 28)),
+        new ProductEntity(2L, "Ramen", "FOOD", LocalDate.of(2001, 4, 11)),
+        new ProductEntity(3L, "Lego", "TOY", LocalDate.of(1980, 11, 5)),
+        new ProductEntity(4L, "Veyron", "CAR", LocalDate.of(2009, 12, 9)),
+        new ProductEntity(5L, "Modern Java in Action", "BOOK", LocalDate.of(2019, 8, 1)));
+
+public List<Car> getCarsFromProductEntites(List<ProductEntity> productEntities) {
+    return productEntities.stream()
+        .filter(p -> "CAR".equals(p.getCategory()))
+        .map(p -> new Car(p.getId(), p.getName(), p.getDate()))
+        .collect(Collectors.toList());
+}
+```
+ProductEntity클래스의 리스트 객체를 스트화시키고<br><br>
+여기에 filter를 통해 ProductEntity의 category가 CAR와 일치하는 ProductEntity만 거릅니다.<br><br>
+그 다음 map을 통해 ProductEntity의 객체에서 id와 name, date를 구해 car클래스를 생성하여<br><br>
+이를 Car List로 만들어 반환합니다.<br><br>
+이를 테스트 해봅니다.<br><br>
+```java
+@Test
+@DisplayName("상품 카테고리에서 자동차를 분류한 후 자동차 클래스 생성하기")
+void getCarsFromProductEntitesTest() {
+    private final List<ProductEntity> productEntities = List.of(
+        new ProductEntity(1L, "Aventador", "CAR", LocalDate.of(2018, 3, 28)),
+        new ProductEntity(2L, "Ramen", "FOOD", LocalDate.of(2001, 4, 11)),
+        new ProductEntity(3L, "Lego", "TOY", LocalDate.of(1980, 11, 5)),
+        new ProductEntity(4L, "Veyron", "CAR", LocalDate.of(2009, 12, 9)),
+        new ProductEntity(5L, "Modern Java in Action", "BOOK", LocalDate.of(2019, 8, 1)));
+    final var expected = List.of(
+                            new Car(1L, "Aventador", "CAR", LocalDate.of(2018, 3, 28)),
+                            new Car(4L, "Veyron", "CAR", LocalDate.of(2009, 12, 9)));
+    final var result = getCarsFromProductEntites(productEntities);
+    assertIterableEquals(expected, result);
+                            
+}
 ```
