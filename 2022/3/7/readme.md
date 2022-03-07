@@ -69,4 +69,6 @@ public class Ball{
 3. 각 결과를 종합한다.<br><br>
 
 ##  Ctrl + Alt + l
-IntelliJ에서 Ctrl + Alt + l을 누르면 자동으로 간격 조절을 해줍니다.<br><br>
+IntelliJ에서 Ctrl + Alt + l을 누르면 자동으로 줄 간격 조절을 해줍니다.<br><br>
+클래스 내부에 마우스 커서가 있는 상태에서는 그 클래스만 줄 간격이 조절되고<br><br>
+패키지를 마우스로 클릭한 다음에 Ctrl + Alt + l을 눌러주면 패키지 내의 모든 클래스의 줄 간격이 자동으로 조절됩니다.<br><br>
