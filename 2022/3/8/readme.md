@@ -232,3 +232,35 @@ public class Application {
     }
 }
 ```
+## 미흡한 점
+나눗셈할 때 0으로 나누면 예외처리를 해줘야 하는데 깜빡하고 이를 하지 못했습니다.<br><br>
+이를 다시 Operator에서 DEVIDE상수에 반영해줘야 합니다.<br><br>
+### production code
+```java
+ DIVIDE("/", (first, second) -> {
+        if (second == 0) {
+            throw new IllegalArgumentException();
+        }
+        return first / second;
+    });
+```
+### test code
+```java
+@Test
+    @DisplayName("0으로 나눌 때 예외 처리")
+    void devideZeroTest() {
+        assertThatIllegalArgumentException().isThrownBy(() -> {
+            Operator.isDevide().operate(6, "0");
+        });
+    }
+```
+production code와 test code에 각각 추가해줍니다.<br><br>
+그리고 Operator의 사칙연산을 각각 따로 테스트하는 것보다 사칙연산이 4개로 정해져 있기 때문에<br><br>
+이를 ParameterizedTest와 CsvSource로 테스트할 수 있습니다.<br><br>
+```java
+    @ParameterizedTest
+    @CsvSource(value = {"+, 8", "-, 4", "*, 12", "/, 3"}, delimiter = ',')
+    void 사칙연산_한번에_테스트하기(String value, String result) {
+        assertThat(Operator.findByOperator(value).operate(6, "2"))
+                .isEqualTo(Integer.parseInt(result));
+```
