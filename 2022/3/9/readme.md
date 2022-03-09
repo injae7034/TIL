@@ -20,6 +20,7 @@ Arrays.streams(\*)<br><br>
 IntStream.range(...), IntStream.rangeClosed(...)<br><br>
 LongStream.range(...), LongStream.rangeClosed(...)<br><br>
 Stream.of(\*), IntStream.of(\*), LongStream.of(\*), DoubleStream.of(\*)<br><br>
+Stream.generate(...), Stream.itreate(...)<br><br>
 등등<br><br>
 
 ## 중개 연산자
@@ -73,4 +74,86 @@ private Stream<Character> characterStream(String s) {
 		}
 		return result.stream();
 	}
+```
+
+## 서브스트림 추출과 스트림 결합
+### stream.limit(n)
+n개의 여소 이후 끝나는 새로운 스트림을 반환합니다.<br><br>
+```java
+Stream<Double> limitStream = Stream.generate(Math::radnom).limit(10);
+```
+### stream.skip(n)
+n개의 요소를 버린 후 이어지는 스트림을 반환합니다.<br><br>
+
+### Stream.concat(a, b)
+두 스트림을 연결하여 새로운 스트림을 반환합니다.<br><br>
+```java
+Stream<String> concatStream = Stream.concat(stream1, stream2);
+```
+
+## 상태 유지 변환
+앞에서 살펴본 스트림 변환은 무상태의 변환입니다.<br><br>
+다시 말해 필터링 또는 매핑된 스트림에서 요소를 추출할 때 결과가 이전 요소에 의존하지 않습니다.<br><br>
+하지만 상태 유지 변환도 존재하는데 아래와 같습니다.<br><br>
+### stream.distinct()
+중복 값을 제거한 새로운 스트림을 반환합니다.<br><br>
+```java
+Stream<String> distinctStream = stream.distinct();
+```
+### stream.sorted()
+정렬된 새로운 스트림을 반환합니다.<br><br>
+```java
+Stream<String> sortedStream = stream.sorted(Comparator.comparing(String::length).reversed());
+```
+
+## 단순 리덕션
+리덕션 메소드는 스트림을 프로그램에서 사용할 수 있는 값으로 리듀스합니다.<br><br>
+리덕션은 최종 연산입니다.<br><br>
+최종 연산을 적용한 후에는 스트림을 사용할 수 없습니다.<br><br>
+이들 메소드는 전체 스트림을 검사하지만 여전히 병렬 실행을 통해 이점을 얻을 수 있습니다.<br><br>
+### stream.count()
+스트림의 요소 갯수를 반환합니다.<br><br>
+```java
+long count = stream.count();
+```
+### stream.max()
+스트림에서 최대값을 반환합니다.<br><br>
+```java
+Optional<String> max = stream.max(String::compareToIgnoreCase);
+if(max.isPresent()) {
+	System.out.println("max: " + max.get());
+}
+```
+
+### stream.min()
+스트림에서 최소값을 반환합니다.<br><br>
+```java
+Optional<String> min = stream.min(String::compareToIgnoreCase);
+if (min.isPresent()) {
+    System.out.println("min: " + min.get());
+}
+```
+
+### stream.findFirst()
+스트림에서 비어있지 않은 첫번째 값을 반환합니다.<br><br>
+```java
+Optional<String> startWithS = stream.filter(s -> s.startsWith("S")).findFirst();
+if(startWithS.isPresent()) {
+	System.out.println("findFirst: " + startWithS.get());
+}
+```
+
+### stream.findAny()
+스트림에서 순서에 상관없이 일치하는 값 하나를 반환합니다.<br><br>
+```java
+Optional<String> startWithS = stream.filter(s -> s.startsWith("S")).findAny();
+if (startWithS.isPresent()) {
+    System.out.println("findAny: " + startWithS.get());
+}
+```
+
+### stream.anyMath()
+스트림에서 일치하는 요소가 있는지 여부를 boolean으로 반환합니다.<br><br>
+```java
+boolean aWordStartWithS = stream.anyMatch(s - > s.srartsWith("S"));
 ```
