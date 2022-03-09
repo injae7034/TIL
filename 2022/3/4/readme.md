@@ -1,5 +1,5 @@
 # 4일에 공부한 내용를 적었습니다.
-<a href="https://homoefficio.github.io/2019/10/03/Java-Optional-%EB%B0%94%EB%A5%B4%EA%B2%8C-%EC%93%B0%EA%B8%B0/" target="_blank">Java Optional 바르게 쓰기</a>를 참고하였습니다.<br><br>ㅒ
+<a href="https://homoefficio.github.io/2019/10/03/Java-Optional-%EB%B0%94%EB%A5%B4%EA%B2%8C-%EC%93%B0%EA%B8%B0/" target="_blank">Java Optional 바르게 쓰기</a>를 참고하였습니다.<br><br>
 Optional클래스는 메서드가 반환할 결과값이 '없음'을 명백하게 표현할 필요가 있고,<br><br>
 null을 반환하면 에러가 발생할 확률이 높은 상황에서 메서드의 반환 타입으로 Optional을 사용하는 것이<br><br>
 Optional 클래스를 만든 주 목적입니다.<br><br>
