@@ -62,3 +62,83 @@ forEach의 경우에는 병렬스트림에서 순서를 보장할 수 없습니�
 두 메소드 모두 최종 연산이기 떄문에 스트림을 재사용할 수 없습니다.<br><br>
 만약 재사용을 하고 싳다면 peek()메소드를 사용해야 합니다.<br><br>
 
+## 기본 타입 스트림
+스트림 라이브러리는 기본 타입 값들에 특화된 IntStream, LongStream, DoubleStream을 포함합니다.<br><br>
+short, char, byte, boolean의 경우 IntStream을 이용합니다.<br><br>
+float인 경우는 DoubleStream을 이용합니다.<br><br>
+다음은 기본적인 정적 스트림 생성 예제입니다.<br><br>
+```java
+IntStream result = IntStream.of(1, 2, 3, 4, 5);
+IntStream result = Arrays.stream(array, 0, 5);
+IntStream result = IntStream.range(0, 5);//최대값 제외
+IntStream result = IntStream.rangeClosed(0, 5);//최대값 포함
+```
+다음은 객체 스트림을 기본 타입 스트림으로 변환하는 예제입니다.<br><br>
+```java
+IntStream result = stream.mapToInt(String::length);
+```
+일반적으로 기본 타입 스트림을 대상으로 동작하는 메소드는 객체 스트림 대상 메소드와 유사합니다.<br><br>
+다만 다음의 몇가지 차이점이 있습니다.<br><br>
+1. toArray메소드는 기본 타입 배열을 리턴합니다.<br><br>
+2. OptionalInt, OptionalLong, OptionalDouble을 리턴합니다.<br><br>
+Optional 클래스와 유사하지만 get 메소드 대신 getAsInt, getAsLong, getAsDouble 등을 포함합니다.<br><br>
+3. 객체 스트림에는 정의되어 있지 않은 합계, 평균, 최대값, 최소값을 리턴하는 sum, average, max, min 메소드를 포함합니다.<br><br>
+4. summaryStatistic 메소드는 스트림의 합계, 평균, 최대값, 최소값을 동시에 보고할 수 있는 IntsummaryStatistic, LongsummaryStatistic, DoublesummaryStatistic타입을 반환합니다.<br><br>
+
+## 함수형 인터페이스
+대부분의 Stream의 API는 인자로 함수형 인터페이스를 받아서 처리합니다.<br><br>
+이 때 함수형 인터페이스는 람다 표현식 또는 메소드 표현식으로 사용합니다.<br><br>
+### 람다 표현식을 사용하지 않은 경우
+```java
+Stream<String> filterStream = stream.filter(new Predicate<String>() {
+      @Override
+      public boolean test(String s) {
+              return s.length() >= 4;
+      }
+});
+```
+### 람다 표현식을 사용한 경우
+```java
+Stream<String> filterStream = stream.filter(s -> s.length() >= 4);
+```
+
+### Supplier\<T\>
+매개변수는 없고, 반환 타입이 T입니다.<br><br>
+즉, T 타입 값을 공급합니다.<br><br>
+### Consumer\<T\>
+매개변수가 T타입이고, 반환타입이 없는 void입니다.<br><br>
+즉, T 타입 값을 소비합니다.<br><br>
+### BiConsumer\<T, U\>
+매개변수가 T와 U타입이고 반환타입이 없는 void입니다.<br><br>
+즉, T와 U타입 값을 소비합니다.<br><br>
+### Predicate\<T\>
+매개변수가 T타입이고 반환형은 boolean입니다.<br><br>
+즉, T타입을 입력 받아 boolean을 반환하는 함수입니다.<br><br>
+### ToIntFunction\<T\>
+매개변수가 T타입이고, 반환형은 int형으로 고정되어 있습니다.<br><br>
+즉, T타입을 인자로 입력 받고, int 값을 반환하는 함수입니다.<br><br>
+### ToLongFunction\<T\>
+매개변수가 T타입이고, 반환형이 long형으로 고정되어 있습니다.<br><br>
+즉, T타입을 인자로 입력 받고, long 값을 반환하는 함수입니다.<br><br>
+### ToDoubleFunction\<T\>
+매개변수가 T타입이고, 반환형이 double형으로 고정되어 있습니다.<br><br>
+즉, T타입을 인자로 입력 받고, double 값을 반환하는 함수입니다.<br><br>
+### IntFunction\<R\>
+매개변수가 int형으로 고정되어 있고, R 타입을 반환합니다.<br><br>
+즉, int를 인자로 입력 받아서 R타입을 반환하는 함수입니다.<br><br>
+### LongFunction\<R\>
+매개변수가 long형으로 고정되어 있고, R 타입을 반환합니다.<br><br>
+즉, long을 인자로 입력 받아서 R타입을 반환하는 함수입니다.<br><br>
+### DoubleFunction\<R\>
+매개변수가 double형으로 고정되어 있고, R 타입을 반환합니다.<br><br>
+즉, double을 인자로 입력 받아서 R 타입을 반환하는 함수입니다.<br><br>
+### Function\<T, R\>
+매개변수가 T 타입이고, 반환형이 R 타입입니다.<br><br>
+즉, T 타입을 인자로 받고, R 타입을 반환하는 함수입니다.<br><br>
+### BiFunction\<T, U, R\>
+매개변수가 T와 U 타입이고, 반환형이 R 타입입니다.<br><br>
+즉, T와 U 타입을 입력 받아서 R 타입을 반환하는 함수입니다.<br><br>
+### UnaryOperator\<T\>
+T타입을 매개변수로 입력 받아 T 타입을 반환하는 단항 연산자입니다.<br><br>
+### BinaryOperator\<T\>
+T타입 2개를 입력 받아 한 개의 T 타입을 반환하는 이향 연산자입니다.<br><br>
