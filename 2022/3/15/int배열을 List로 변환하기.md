@@ -78,7 +78,8 @@ Arrays.asList()는 고정길이의 List를 리턴하기 때문에,<br><br>
 ###  2.4 new ArrayList<>(Arrays.asList()) 
 이렇게 원본 배열의 값과 변환 된 List의 값이 동기화 되는 것을 막기 위해서<br><br>
 Arrays.asList()로 변환한 List로 새로운 ArrayList 객체를 생성해서 사용할 수 있습니다.<br><br>
-``java
+
+```java
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
