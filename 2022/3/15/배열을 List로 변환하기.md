@@ -1,4 +1,4 @@
-# int 배열을 List로 변환하기
+# 배열을 List로 변환하기
 <a href="https://hianna.tistory.com/551" target="_blank">배열을 List로 변환하기</a>를 참고하였습니다.<br><br>
 배열을 List로 변환할 때 방법은 세 가지 있습니다.<br><br>
 ## 1. Arrays.asList()
