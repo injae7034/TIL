@@ -28,3 +28,7 @@ pulbic PlayResult play(List<Integer> ballNumbers) {
 }
 ```
 그 이외에는 구현하는데 문제는 없었습니다.<br><br>
+
+# 문자열덧셈계산기 구현하기
+TDD를 바탕으로 하여 문자열덧셈계산기를 구현하였습니다.<br><br>
+내일 좀 더 수정한 다음 자동차경주게임을 구현할 것입니다.<br><br>
