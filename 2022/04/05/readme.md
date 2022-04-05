@@ -11,5 +11,3 @@ Intellij에서 파일 마지막에 개행이 되도록 설정함.
 ## 3. AppTest에 DisplayName 어노테이션 추가하여 설명
 ## 4. Junit5를 사용해 계층 구조의 테스트 코드를 작성
 TaskServiceTest와 TaskControllerTest에 적용함.
-
-### 이번 한 주도 화이팅입니다^^
