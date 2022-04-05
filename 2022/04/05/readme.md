@@ -1,5 +1,4 @@
 # 5일에 공부한 내용을 적었습니다.
-<br>
 
 # TaskController MockMVC 테스트 
 어제 create(POST) 테스트 코드를 작성하다가 잘몰라서 멈췄었는데,<br>
