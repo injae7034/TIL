@@ -6,7 +6,10 @@
 ### 1. HelloController의 JavaDoc 주석 1줄로 축약함.
 ### 2. given은 사용하지 않고, MockMvc를 사용하여 TaskControllerMock_MVC_Test하기
 MockMvc를 사용하면 반드시 given을 사용해야 하는 줄 알았는데 그게 아니었습니다.<br>
-TaskService에 test 상황들을 추가하고, MockMvc를 컨트롤러로 활용하여 perform을 이용해 테스트하였고,<br>
+일단 TaskService에서 MockBean애노테이션을 제거하고 MockMvc에서도 Autowired어노테이션을 제거한 다음<br>
+setUp에서 직접 할당을 해줬습니다.<br>
+이 후 CRUD의 각 Context에서 필요한 상황에 맞게 TaskService에 task를 추가하고,<br>
+MockMvc를 컨트롤러로 활용하여 perform을 이용해 테스트하였고,<br>
 CRUD의 모든 상황에 대해서 테스트를 통과하였습니다.<br>
 다만 모든 Tasks를 읽는 항목 테스트에서 10개의 task를 TaskService에 넣었는데 이 10개가 다 잘들어갔는지 테스트하기 위해<br>10개 항목을 모두 반복문없이 검사하고 있는데 이를 반복문으로 할 방법을 아직 찾지 못했습니다.<br>
 스트림을 사용하여 forEach를 하면 뭔가 한줄에 해결이 될거같기도 한데 아직은 해결하지 못해서 10줄 노가다를 하였습니다;;<br>
